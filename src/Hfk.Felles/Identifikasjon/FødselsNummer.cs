@@ -19,36 +19,13 @@ namespace Hfk.Felles.Identifikasjon
         }
 
         /// <summary>
-        ///     Backwards compat.
-        /// </summary>
-        protected string fnr { get { return identNr; } }
-
-        /// <summary>
         ///     Hent fødselsdatoen fra den angitt fødselsnummer.
         /// </summary>
         /// <returns></returns>
         protected override DateTime FødselsDatoFraNummeret()
         {
-            return (fnr.Substring(0, 2) + "." + fnr.Substring(2, 2) + "." + fnr.Substring(4, 2))
+            return (identNr.Substring(0, 2) + "." + identNr.Substring(2, 2) + "." + identNr.Substring(4, 2))
                    .ToDateFromNorwegian();
-        }
-
-        /// <summary>
-        ///     Backwards compat.
-        /// </summary>
-        [Obsolete("Utdatert: Bruk heller Fødselsnummer().Kjønn")]
-        public static string GetKjonnFromFnr(string fnr)
-        {
-            return new FødselsNummer(fnr).Kjønn;
-        }
-
-        /// <summary>
-        ///     Backwards compat.
-        /// </summary>
-        [Obsolete("Utdatert: Bruk heller Fødselsnummer().FødselsDato")]
-        public static DateTime GetFodselsdatoFromFnr(string fnr)
-        {
-            return new FødselsNummer(fnr).FødselsDato;
         }
     }
 

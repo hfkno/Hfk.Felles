@@ -193,7 +193,7 @@ namespace Hfk.Felles.Tests.Extensions
         public void can_validate_a_dufnummer()
         {
             validDUFnrs.ForEach(fhnr =>
-                    Assert.That(fhnr.ErGyldigDUFNummer(), 
+                    Assert.That(fhnr.ErGyldigDUFNummer(),
                                 "{0} var ugyldig".FormatWith(fhnr))
                              );
         }

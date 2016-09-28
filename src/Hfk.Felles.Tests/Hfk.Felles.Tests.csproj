@@ -61,6 +61,9 @@
     <Compile Include="Extensions\StringConversions.cs" />
     <Compile Include="Extensions\Strings.cs" />
     <Compile Include="Extensions\Validation.cs" />
+    <Compile Include="Identifikasjon\Generering\Generering.cs" />
+    <Compile Include="Identifikasjon\IdentifikatorTyper.cs" />
+    <Compile Include="Identifikasjon\Identitetsnummrene.cs" />
     <Compile Include="Interfaces\ILog.cs" />
     <Compile Include="Interfaces\IResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

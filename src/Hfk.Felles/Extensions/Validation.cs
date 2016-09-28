@@ -29,15 +29,16 @@ namespace Hfk.Felles
         /// <returns>Whether the fødselsnummer was valid or not.</returns>
         public static bool ErGyldigFNummer(this string fnr)
         {
-            if (string.IsNullOrEmpty(fnr) || !(fnr.Length == 11 && fnr.IsNumeric()))
+            if (string.IsNullOrEmpty(fnr) || fnr.Length != 11 || fnr.Contains(" "))
             {
                 return false;
             }
 
             try
             {
-                (fnr.Substring(0, 2) + "." + fnr.Substring(2, 2) + "." + fnr.Substring(4, 2))
-                .ToDateFromNorwegian();
+                long.Parse(fnr);
+                Convert.ToDateTime(fnr.Substring(0, 2) + "." + fnr.Substring(2, 2) + "." + fnr.Substring(4, 2),
+                    CultureInfo.CreateSpecificCulture("nb-NO"));
             }
             catch (FormatException)
             {
@@ -61,7 +62,7 @@ namespace Hfk.Felles
         /// </remarks>
         public static bool ErGyldigDNummer(this string dnr)
         {
-            if (string.IsNullOrEmpty(dnr) || !(dnr.Length == 11 && dnr.IsNumeric()))
+            if (string.IsNullOrEmpty(dnr) || dnr.Length != 11 || dnr.Contains(" "))
             {
                 return false;
             }
@@ -85,8 +86,9 @@ namespace Hfk.Felles
             firstDigit = firstDigit - 4;
             try
             {
-                (firstDigit + dnr.Substring(1, 1) + "." + dnr.Substring(2, 2) + "." + dnr.Substring(4, 2))
-                .ToDateFromNorwegian();
+                Convert.ToDateTime(
+                    firstDigit + dnr.Substring(1, 1) + "." + dnr.Substring(2, 2) + "." + dnr.Substring(4, 2),
+                    CultureInfo.CreateSpecificCulture("nb-NO"));
             }
             catch (FormatException)
             {
@@ -109,7 +111,7 @@ namespace Hfk.Felles
         /// </remarks>
         public static bool ErGyldigHNummer(this string hnr)
         {
-            if (string.IsNullOrEmpty(hnr) || !(hnr.Length == 11 && hnr.IsNumeric()))
+            if (string.IsNullOrEmpty(hnr) || hnr.Length != 11 || hnr.Contains(" "))
             {
                 return false;
             }
@@ -134,8 +136,9 @@ namespace Hfk.Felles
 
             try
             {
-                (hnr.Substring(0, 2) + "." + thirdDigit + hnr.Substring(3, 1) + "." + hnr.Substring(4, 2))
-                .ToDateFromNorwegian();
+                Convert.ToDateTime(
+                    hnr.Substring(0, 2) + "." + thirdDigit + hnr.Substring(3, 1) + "." + hnr.Substring(4, 2),
+                    CultureInfo.CreateSpecificCulture("nb-NO"));
             }
             catch (FormatException)
             {
@@ -172,8 +175,8 @@ namespace Hfk.Felles
 
         private static bool CheckKontrollSiffre(string fnr)
         {
-            var v1 = new [] { 3, 7, 6, 1, 8, 9, 4, 5, 2 } ;
-            var v2 = new [] { 5, 4, 3, 2, 7, 6, 5, 4, 3, 2 } ;
+            var v1 = new[] { 3, 7, 6, 1, 8, 9, 4, 5, 2 };
+            var v2 = new[] { 5, 4, 3, 2, 7, 6, 5, 4, 3, 2 };
 
             var s1 = 0;
             var s2 = 0;
@@ -220,7 +223,6 @@ namespace Hfk.Felles
             return false;
         }
 
-
         /// <summary>
         ///     Validates a given DUF-nummer
         /// </summary>
@@ -228,34 +230,31 @@ namespace Hfk.Felles
         /// <remarks>
         ///     DUF-nummeret er eit tolvsifra nummer som vert brukt om lag på same måte som eit fødselsnummer, 
         ///     men inneheld ikkje informasjon om til dømes fødselsdato.
+        ///     
+        ///     Implementasjonsdetaljer fant paa: http://lovas.info/2013/12/01/identitetsnummer-i-norge/
         /// </remarks>
-        /// <returns></returns>
+        /// <returns>Whether the DUF-nr is valid or not.</returns>
         public static bool ErGyldigDUFNummer(this string dufnr)
         {
-            // TODO: implement
-            // http://lovas.info/2013/12/01/identitetsnummer-i-norge/
-            //Hvis DUFNR ikke har lengde 12->ikke gyldig
+            if (string.IsNullOrEmpty(dufnr) || !(dufnr.Length == 12 && dufnr.IsNumeric()))
+            {
+                return false;
+            }
+            
+            var v = new[] { 4, 6, 3, 2, 4, 6, 3, 2, 7, 5 };
+            var k = Convert.ToInt16(dufnr.Substring(10));
 
-            //Hvis DUFNR ikke er et tall->ikke gyldig
+            var chars = dufnr.Substring(0, 10).ToCharArray();
+            var duf = Array.ConvertAll(chars, c => int.Parse(c.ToString()));
+            
+            var s = 0;
 
-            //int kontroll = 2 siste siffer i DUFNR
-            //int[] d_siffer = LØPENR + ÅRSTALL(altså array lengde 10)
-
-            //int[] da = new int[] { 4, 6, 3, 2, 7, 5, 4, 6, 3, 2 }
-
-            //int tmp = 0;
-
-            //            for (int i = 9; i >= 0; i–)
-            //            {
-            //                tmp = da[i] * d_siffer[i];
-            //            }
-
-            //            tmp = tmp mod 11
-
-            //if (tmp == kontroll) –> duf gyldig
-            //else –> ikke gyldig
-
-            return false;
+            for (var i = 9; 0 <= i; --i)
+            {
+                s += duf[i] * v[i];
+            }
+            
+            return (s % 11) == k;
         }
     }
 }

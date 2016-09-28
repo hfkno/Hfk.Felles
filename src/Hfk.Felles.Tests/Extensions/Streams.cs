@@ -26,7 +26,7 @@ namespace Hfk.Felles.Tests.Extensions
         public void can_have_all_their_content_read()
         {
             var fs = new FileStream(testFile, FileMode.Open);
-            fs.ReadLines();
+            fs.ReadAll();
         }
     }
 }
